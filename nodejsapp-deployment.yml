@@ -14,6 +14,19 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: bankolejohn/ignite-nodejsapp:1.0 # Replace with your Node.js app image
-        ports: 3000
+        image: docker.io/bankolejohn/ignite-nodejsapp:1.0 # Replace with your Node.js app image
+        ports: 
         - containerPort: 3000 # Port your Node.js app is listening on
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app-service
+spec:
+  selector:
+    app: nodejs-app  # This should match the labels in your Deployment
+  ports:
+    - protocol: TCP
+      port: 80      # Port exposed by the Service (can be any port)
+      targetPort: 3000  # Port your Node.js app is listening on
+  type: ClusterIP    # Change to NodePort or LoadBalancer as needed
