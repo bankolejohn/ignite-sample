@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+      - name: nodejs-app
+        image: bankolejohn/ignite-nodejsapp:1.0 # Replace with your Node.js app image
+        ports: 3000
+        - containerPort: 3000 # Port your Node.js app is listening on

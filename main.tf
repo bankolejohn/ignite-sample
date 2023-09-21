@@ -1,6 +1,6 @@
 # Define the provider
 provider "kubernetes" {
-  config_path      = "~/.kube/config"
+  config_path    = "~/.kube/config"
   load_config_file = "true"
 }
 
@@ -9,8 +9,8 @@ resource "kubernetes_cluster" "kind_cluster" {
   name = "kind-cluster"
 
   worker_node_pool {
-    name  = "worker"
-    count = 1
+    name   = "worker"
+    count  = 1
     config {
       kubernetes_version = "v1.22.0"
       # Add additional worker node pool configuration if needed
