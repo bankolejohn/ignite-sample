@@ -19,8 +19,8 @@ jobs:
     - name: Push Docker Image to Docker Hub
       run: |
         echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-        docker tag your-docker-image-name "${{ secrets.DOCKER_HUB_USERNAME }}/your-docker-image-name:latest"
-        docker push "${{ secrets.DOCKER_HUB_USERNAME }}/your-docker-image-name:latest"
+        docker tag newimage "${{ secrets.DOCKER_HUB_USERNAME }}/newimage:latest"
+        docker push "${{ secrets.DOCKER_HUB_USERNAME }}/newimage:latest"
 
   deploy:
     runs-on: ubuntu-latest
