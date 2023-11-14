@@ -30,6 +30,25 @@ jobs:
     - name: Deploy to EC2
       run: |
         # Add Terraform deployment script here
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null
+        sudo apt-get update && sudo apt-get install -y terraform
+
+    - name: Initialize Terraform
+      run: terraform init
+
+    - name: Apply Terraform
+      run: terraform apply -auto-approve
+
+      # Additional steps for Terraform output, testing, or other deployment tasks
+
+    - name: Deploy to EC2
+      run: |
+          def instanceIp = terraform output instance_public_ip
+          docker save your-docker-image-name | ssh -o StrictHostKeyChecking=no ubuntu@${instanceIp} 'docker load'
+
+  # Add additional steps as needed, such as testing, notifications, etc.
+
         # Example: terraform apply -auto-approve
 
 # Add additional steps as needed, such as testing, notifications, etc.
