@@ -27,28 +27,27 @@ jobs:
     needs: build
 
     steps:
-    - name: Deploy to EC2
-      run: |
-        # Add Terraform deployment script here
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null
-        sudo apt-get update && sudo apt-get install -y terraform
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Initialize Terraform
-      run: terraform init
+      - name: Install Terraform
+        run: |
+          sudo apt-get update && sudo apt-get install -y unzip
+          wget https://releases.hashicorp.com/terraform/0.15.5/terraform_0.15.5_linux_amd64.zip
+          unzip terraform_0.15.5_linux_amd64.zip
+          sudo mv terraform /usr/local/bin/
+          terraform --version
 
-    - name: Apply Terraform
-      run: terraform apply -auto-approve
+      - name: Deploy Docker Image
+        run: |
+          terraform init
+          terraform apply -auto-approve
 
-      # Additional steps for Terraform output, testing, or other deployment tasks
+          # Extract the public IP of the deployed EC2 instance
+          instance_ip=$(terraform output instance_public_ip)
 
-    - name: Deploy to EC2
-      run: |
-          def instanceIp = terraform output instance_public_ip
-          docker save your-docker-image-name | ssh -o StrictHostKeyChecking=no ubuntu@${instanceIp} 'docker load'
+          # Example: Deploy Docker image on EC2 using SSH
+          docker save your-docker-image-name | ssh -o StrictHostKeyChecking=no ubuntu@${instance_ip} 'docker load'
 
-  # Add additional steps as needed, such as testing, notifications, etc.
-
-        # Example: terraform apply -auto-approve
-
-# Add additional steps as needed, such as testing, notifications, etc.
+          # Clean up (destroy resources)
+          #terraform destroy -auto-approve
